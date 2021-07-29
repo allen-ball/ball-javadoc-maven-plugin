@@ -50,7 +50,7 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
@@ -64,7 +64,7 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  */
 @Mojo(name = "generate-offline-link-options-file",
       requiresDependencyResolution = RUNTIME,
-      defaultPhase = GENERATE_RESOURCES, requiresProject = true)
+      defaultPhase = GENERATE_SOURCES, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
 public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
     private static final Pattern JAR_ENTRY_PATTERN = Pattern.compile("^(package|element)[^-]*-list$");
