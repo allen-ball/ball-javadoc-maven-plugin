@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:resolver="antlib:org.apache.maven.resolver.ant"
+         xmlns:util="antlib:ball.util.ant"
+         name="ball-javadoc-maven-plugin" basedir="." default="jar">
+  <description>
+    ball-javadoc-maven-plugin
+    -------------------------------------------------------------
+    Javadoc Maven Plugin
+
+    $Id$
+  </description>
+
+  <resolver:resolve>
+    <dependencies>
+      <dependency coords="ball:parent:20210722.0:xml:compile"/>
+    </dependencies>
+    <properties/>
+  </resolver:resolve>
+  <import file="${ball:parent:xml}"/>
+</project>
