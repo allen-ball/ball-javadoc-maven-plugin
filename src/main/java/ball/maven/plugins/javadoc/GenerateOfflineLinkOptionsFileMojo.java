@@ -1,9 +1,13 @@
 package ball.maven.plugins.javadoc;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,9 +15,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.inject.Inject;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +29,6 @@ import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -36,6 +40,10 @@ import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toCollection;
@@ -59,6 +67,8 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
       defaultPhase = GENERATE_RESOURCES, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
 public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
+    private static final Pattern JAR_ENTRY_PATTERN = Pattern.compile("^(package|element)[^-]*-list$");
+
     @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/offline-links")
     private File outputDirectory = null;
 
@@ -81,10 +91,12 @@ public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
                     getResolvedOfflineLinkMap().entrySet().stream()
                     .collect(groupingBy(Map.Entry::getValue,
                                         mapping(Map.Entry::getKey, toList())));
-map.entrySet().forEach(t -> log.info("{}", t));
+
                 if (map.isEmpty()) {
                     log.warn("No offline links configured");
                 }
+
+                generateOutput(map);
             } else {
                 log.info("Skipping offline link options file generation");
             }
@@ -169,6 +181,56 @@ map.entrySet().forEach(t -> log.info("{}", t));
         request.setRemoteRepositories(repoList);
 
         return request;
+    }
+
+    private void generateOutput(Map<URL,List<Artifact>> map) throws IOException {
+        Path parent = outputDirectory.toPath();
+
+        Files.createDirectories(parent);
+
+        Path options = parent.resolve("OPTIONS");
+
+        try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {
+            for (Map.Entry<URL,List<Artifact>> entry : map.entrySet()) {
+                List<Artifact> artifacts = entry.getValue();
+
+                for (Artifact artifact : artifacts) {
+                    Path location = parent.resolve(ArtifactUtils.versionlessKey(artifact));
+
+                    Files.createDirectories(location);
+
+                    try (JarFile jar = new JarFile(artifact.getFile())) {
+                        List<JarEntry> entries =
+                            jar.stream()
+                            .filter(t -> JAR_ENTRY_PATTERN.matcher(t.getName()).matches())
+                            .collect(toList());
+
+                        if (! entries.isEmpty()) {
+                            for (JarEntry jarEntry : entries) {
+                                try (InputStream in = jar.getInputStream(jarEntry)) {
+                                    Files.copy(in, location.resolve(jarEntry.getName()), REPLACE_EXISTING);
+                                }
+                            }
+
+                            Path packageList = location.resolve("package-list");
+                            Path elementList = location.resolve("element-list");
+
+                            if (! Files.exists(packageList)) {
+                                Files.copy(elementList, packageList);
+                            } else if (! Files.exists(elementList)) {
+                                Files.copy(packageList, elementList);
+                            }
+
+                            out.println("-linkoffline");
+                            out.println(entry.getKey());
+                            out.println(location);
+                        } else {
+                            log.warn("{}: No location files; skipping...", location);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private class JavadocArtifact extends DefaultArtifact {
