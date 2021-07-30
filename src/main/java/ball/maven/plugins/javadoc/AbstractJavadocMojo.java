@@ -17,6 +17,8 @@ import static lombok.AccessLevel.PROTECTED;
 /**
  * Abstract base class for javadoc {@link org.apache.maven.plugin.Mojo}s.
  *
+ * {@bean.info}
+ *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
  * @version $Revision$
  */

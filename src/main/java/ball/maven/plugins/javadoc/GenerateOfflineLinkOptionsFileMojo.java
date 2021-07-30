@@ -59,6 +59,8 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  *
  * {@maven.plugin.fields}
  *
+ * {@bean.info}
+ *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
  * @version $Revision$
  */
@@ -225,7 +227,7 @@ public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
                             out.println(entry.getKey());
                             out.println(location);
                         } else {
-                            log.warn("{}: No location files; skipping...", location);
+                            log.warn("{}: Location directory is empty; skipping...", location);
                         }
                     }
                 }
