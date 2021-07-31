@@ -64,14 +64,14 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
  * @version $Revision$
  */
-@Mojo(name = "generate-offline-link-options-file",
+@Mojo(name = "generate-options-file",
       requiresDependencyResolution = RUNTIME,
       defaultPhase = GENERATE_SOURCES, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
-public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
+public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
     private static final Pattern JAR_ENTRY_PATTERN = Pattern.compile("^(package|element)[^-]*-list$");
 
-    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/offline-links")
+    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/javadoc-options")
     private File outputDirectory = null;
 
     @Parameter(required = false)
@@ -190,7 +190,7 @@ public class GenerateOfflineLinkOptionsFileMojo extends AbstractJavadocMojo {
 
         Files.createDirectories(parent);
 
-        Path options = parent.resolve("OPTIONS");
+        Path options = parent.resolve("options");
 
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {
             for (Map.Entry<URL,List<Artifact>> entry : map.entrySet()) {
