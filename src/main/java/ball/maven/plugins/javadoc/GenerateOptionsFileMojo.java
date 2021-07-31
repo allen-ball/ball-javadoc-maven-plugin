@@ -93,23 +93,10 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         try {
             if (! isSkip()) {
                 Set<URL> set = getLinkSet();
-
-                if (links.length > 0) {
-                    if (set.isEmpty()) {
-                        log.warn("No links matched.");
-                    }
-                }
-
                 Map<URL,List<Artifact>> map =
                     getResolvedOfflinelinkMap().entrySet().stream()
                     .collect(groupingBy(Map.Entry::getValue,
                                         mapping(Map.Entry::getKey, toList())));
-
-                if (offlinelinks.length > 0) {
-                    if (map.isEmpty()) {
-                        log.warn("No offline links matched.");
-                    }
-                }
 
                 generateOutput(set, map);
             } else {
@@ -138,10 +125,6 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
                 .map(link::getUrl)
                 .collect(toList());
 
-            if (list.isEmpty()) {
-                log.warn("{} does not match any project artifacts.", link.getArtifact());
-            }
-
             set.addAll(list);
         }
 
@@ -159,10 +142,6 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
                 .filter(offlinelink::include)
                 .map(JavadocArtifact::new)
                 .collect(toCollection(LinkedHashSet::new));
-
-            if (set.isEmpty()) {
-                log.warn("{} does not match any project dependencies.", offlinelink.getArtifact());
-            }
 
             for (Artifact artifact : set) {
                 URL url = map.get(artifact);
