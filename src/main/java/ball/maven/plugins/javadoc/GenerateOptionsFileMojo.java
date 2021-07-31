@@ -54,8 +54,8 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURC
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
- * {@link org.apache.maven.plugin.Mojo} to generate offline link options
- * file for javadoc.
+ * {@link org.apache.maven.plugin.Mojo} to generate javadoc options file for
+ * {@code maven-javadoc-plugin}.
  *
  * {@maven.plugin.fields}
  *
@@ -75,6 +75,9 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
     private File outputDirectory = null;
 
     @Parameter(required = false)
+    private Link[] links = new Link[] { };
+
+    @Parameter(required = false)
     private Offlinelink[] offlinelinks = new Offlinelink[] { };
 
     @Inject private MavenProject project = null;
@@ -89,18 +92,28 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
 
         try {
             if (! isSkip()) {
+                Set<URL> set = getLinkSet();
+
+                if (links.length > 0) {
+                    if (set.isEmpty()) {
+                        log.warn("No links matched.");
+                    }
+                }
+
                 Map<URL,List<Artifact>> map =
-                    getResolvedOfflineLinkMap().entrySet().stream()
+                    getResolvedOfflinelinkMap().entrySet().stream()
                     .collect(groupingBy(Map.Entry::getValue,
                                         mapping(Map.Entry::getKey, toList())));
 
-                if (map.isEmpty()) {
-                    log.warn("No offline links configured");
+                if (offlinelinks.length > 0) {
+                    if (map.isEmpty()) {
+                        log.warn("No offline links matched.");
+                    }
                 }
 
-                generateOutput(map);
+                generateOutput(set, map);
             } else {
-                log.info("Skipping offline link options file generation");
+                log.info("Skipping javadoc options file generation.");
             }
         } catch (Throwable throwable) {
             log.error("{}", throwable.getMessage(), throwable);
@@ -115,7 +128,27 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         }
     }
 
-    private Map<Artifact,URL> getResolvedOfflineLinkMap() {
+    private Set<URL> getLinkSet() {
+        Set<URL> set = new LinkedHashSet<>();
+
+        for (Link link : links) {
+            List<URL> list =
+                project.getArtifacts().stream()
+                .filter(link::include)
+                .map(link::getUrl)
+                .collect(toList());
+
+            if (list.isEmpty()) {
+                log.warn("{} does not match any project artifacts.", link.getArtifact());
+            }
+
+            set.addAll(list);
+        }
+
+        return set;
+    }
+
+    private Map<Artifact,URL> getResolvedOfflinelinkMap() {
         Map<Artifact,URL> map = new TreeMap<>(Comparator.comparing(ArtifactUtils::versionlessKey));
         Set<Artifact> javadocs = getJavadocJarDependencyManagementSet();
         ProjectBuildingRequest request = getProjectBuildingRequest();
@@ -185,7 +218,7 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         return request;
     }
 
-    private void generateOutput(Map<URL,List<Artifact>> map) throws IOException {
+    private void generateOutput(Set<URL> set, Map<URL,List<Artifact>> map) throws IOException {
         Path parent = outputDirectory.toPath();
 
         Files.createDirectories(parent);
@@ -193,6 +226,11 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         Path options = parent.resolve("options");
 
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {
+            for (URL url : set) {
+                out.println("-link");
+                out.println(url);
+            }
+
             for (Map.Entry<URL,List<Artifact>> entry : map.entrySet()) {
                 List<Artifact> artifacts = entry.getValue();
 
@@ -246,7 +284,7 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         }
 
         public JavadocArtifact(Artifact artifact) {
-            super(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), EMPTY, "jar", "javadoc", manager.getArtifactHandler("jar"));
+            this(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion());
         }
     }
 }
