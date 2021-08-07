@@ -20,17 +20,22 @@ package ball.maven.plugins.javadoc;
  * limitations under the License.
  * ##########################################################################
  */
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -50,6 +55,27 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
     @Parameter(defaultValue = "false", property = "javadoc.skip")
     private boolean skip = false;
 
+    /**
+     * Method to produce a {@link Stream} of
+     * {@link MavenProject#getDependencies()} and
+     * {@link MavenProject#getDependencyManagement()}
+     * {@link Dependency Dependencies}.
+     *
+     * @param   project         The {@link MavenProject}.
+     *
+     * @return  The {@link Dependency} {@link Stream}.
+     */
+    protected Stream<Dependency> getDependencyManagementStream(MavenProject project) {
+        Stream<Dependency> stream =
+            Stream.of(project.getDependencies(),
+                      project.getDependencyManagement().getDependencies())
+            .filter(Objects::nonNull)
+            .flatMap(Collection::stream);
+
+        return stream;
+    }
+
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
     }
 }
