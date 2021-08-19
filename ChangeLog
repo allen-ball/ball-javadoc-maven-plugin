@@ -1,3 +1,8 @@
+2021-08-19  Allen D. Ball  <ball@hcf.dev>
+
+	* src/main/java/ball/maven/plugins/javadoc/GenerateJavadocMapMojo.java:
+	Initial writing.
+
 2021-08-14  Allen D. Ball  <ball@hcf.dev>
 
 	* Compile against Maven 3.8.2.
