@@ -54,6 +54,12 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
 /**
  * {@link org.apache.maven.plugin.Mojo} to generate offline javadoc map.
+ * For each documented package, generate the following key/value pairs:
+ * <i>package</i>/Javadoc Root URL, <i>package</i>-module / Module (e.g.,
+ * java.base), and <i>package</i>-artifact / groupId:artifactId.
+ *
+ * The <i>package</i>-module and <i>package</i>-artifact key/values are
+ * absent if no module or artifact respectively are specified.
  *
  * {@maven.plugin.fields}
  *
