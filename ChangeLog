@@ -1,3 +1,25 @@
+2021-08-20  Allen D. Ball  <ball@hcf.dev>
+
+	* pom.xml: Released version 1.1.0.20210820.
+
+2021-08-19  Allen D. Ball  <ball@hcf.dev>
+
+	* src/main/java/ball/maven/plugins/javadoc/GenerateJavadocMapMojo.java:
+	Initial writing.
+
+2021-08-14  Allen D. Ball  <ball@hcf.dev>
+
+	* Compile against Maven 3.8.2.
+
+2021-08-07  Allen D. Ball  <ball@hcf.dev>
+
+	* src/main/java/ball/maven/plugins/javadoc/GenerateOptionsFileMojo.java:
+	Added boolean <includeDependencyManagement/> configuration
+	parameter (default: false).
+
+	* src/main/java/ball/maven/plugins/javadoc/AbstractJavadocMojo.java:
+	Added getDependencyManagementStream(MavenProject) method.
+
 2021-07-31  Allen D. Ball  <ball@hcf.dev>
 
 	* pom.xml: Released version 1.0.0.20210731.
