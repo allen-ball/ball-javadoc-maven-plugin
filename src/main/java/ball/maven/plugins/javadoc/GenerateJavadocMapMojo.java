@@ -2,10 +2,8 @@ package ball.maven.plugins.javadoc;
 /*-
  * ##########################################################################
  * Javadoc Maven Plugin
- * $Id$
- * $HeadURL$
  * %%
- * Copyright (C) 2021 Allen D. Ball
+ * Copyright (C) 2021, 2022 Allen D. Ball
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +64,6 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
- * @version $Revision$
  */
 @Mojo(name = "generate-javadoc-map", requiresDependencyResolution = RUNTIME, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
@@ -183,9 +180,7 @@ public class GenerateJavadocMapMojo extends AbstractJavadocMojo {
         URL url = null;
 
         try {
-            url =
-                new URI("jar", artifact.getFile().toURI().toASCIIString() + "!/", null)
-                .toURL();
+            url = new URI("jar", artifact.getFile().toURI().toASCIIString() + "!/", null).toURL();
         } catch(URISyntaxException | MalformedURLException exception) {
             log.debug("{}: {}", artifact, exception.getMessage(), exception);
             throw new IllegalStateException(exception);

@@ -2,10 +2,8 @@ package ball.maven.plugins.javadoc;
 /*-
  * ##########################################################################
  * Javadoc Maven Plugin
- * $Id$
- * $HeadURL$
  * %%
- * Copyright (C) 2021 Allen D. Ball
+ * Copyright (C) 2021, 2022 Allen D. Ball
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +27,6 @@ import lombok.EqualsAndHashCode;
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
- * @version $Revision$
  */
 @Data @EqualsAndHashCode(callSuper = true)
 public class Offlinelink extends Link {

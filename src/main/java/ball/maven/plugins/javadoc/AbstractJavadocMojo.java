@@ -2,10 +2,8 @@ package ball.maven.plugins.javadoc;
 /*-
  * ##########################################################################
  * Javadoc Maven Plugin
- * $Id$
- * $HeadURL$
  * %%
- * Copyright (C) 2021 Allen D. Ball
+ * Copyright (C) 2021, 2022 Allen D. Ball
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +65,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
- * @version $Revision$
  */
 @NoArgsConstructor(access = PROTECTED) @Getter @ToString @Slf4j
 public abstract class AbstractJavadocMojo extends AbstractMojo {
@@ -100,8 +97,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
      */
     protected Stream<Dependency> getDependencyManagementStream(MavenProject project) {
         Stream<Dependency> stream =
-            Stream.of(project.getDependencies(),
-                      project.getDependencyManagement().getDependencies())
+            Stream.of(project.getDependencies(), project.getDependencyManagement().getDependencies())
             .filter(Objects::nonNull)
             .flatMap(Collection::stream);
 
@@ -206,8 +202,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
                     }
                 } else {
                     if (! Objects.equals(url, offlinelink.getUrl(artifact))) {
-                        log.warn("{} matches {} but was previously resolved with {}",
-                                 artifact, offlinelink, url);
+                        log.warn("{} matches {} but was previously resolved with {}", artifact, offlinelink, url);
                     }
                 }
             }

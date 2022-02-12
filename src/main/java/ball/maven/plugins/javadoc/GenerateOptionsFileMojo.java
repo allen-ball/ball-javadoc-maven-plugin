@@ -2,10 +2,8 @@ package ball.maven.plugins.javadoc;
 /*-
  * ##########################################################################
  * Javadoc Maven Plugin
- * $Id$
- * $HeadURL$
  * %%
- * Copyright (C) 2021 Allen D. Ball
+ * Copyright (C) 2021, 2022 Allen D. Ball
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,10 +62,8 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
- * @version $Revision$
  */
-@Mojo(name = "generate-options-file",
-      requiresDependencyResolution = RUNTIME,
+@Mojo(name = "generate-options-file", requiresDependencyResolution = RUNTIME,
       defaultPhase = GENERATE_SOURCES, requiresProject = true)
 @NoArgsConstructor @ToString @Slf4j
 public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
@@ -90,8 +86,7 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
                 Set<URL> set = getLinkSet(project, includeDependencyManagement);
                 Map<URL,List<Artifact>> map =
                     getResolvedOfflinelinkMap(project, includeDependencyManagement).entrySet().stream()
-                    .collect(groupingBy(Map.Entry::getValue,
-                                        mapping(Map.Entry::getKey, toList())));
+                    .collect(groupingBy(Map.Entry::getValue, mapping(Map.Entry::getKey, toList())));
 
                 set.removeAll(map.keySet());
 
