@@ -11,8 +11,8 @@
   <parent>
     <groupId>ball</groupId>
     <artifactId>javadoc</artifactId>
-    <version>20210923.0</version>
-    <relativePath>../pom.xml</relativePath>
+    <version>2022.0.0</version>
+    <relativePath>../GitHub/javadoc/pom.xml</relativePath>
   </parent>
   <properties>
     <javadoc.artifact>${project.artifactId}</javadoc.artifact>
