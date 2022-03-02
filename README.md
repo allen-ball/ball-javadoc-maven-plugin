@@ -7,6 +7,8 @@ Description
 
 Maven plugin for generating input files for use by `maven-javadoc-plugin`.
 
+Javadoc is published at <https://allen-ball.github.io/ball-javadoc-maven-plugin/>.
+
 
 License
 -------
