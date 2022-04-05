@@ -22,12 +22,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <name>Javadoc Maven Plugin</name>
-  <description></description>
   <groupId>ball</groupId>
   <artifactId>ball-javadoc-maven-plugin</artifactId>
   <version>1.2.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+  <name>${project.groupId}:${project.artifactId}</name>
+  <description>Javadoc Maven Plugin</description>
+  <url>https://github.com/allen-ball/ball-javadoc-maven-plugin</url>
   <parent>
     <groupId>ball</groupId>
     <artifactId>parent</artifactId>
