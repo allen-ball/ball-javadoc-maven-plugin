@@ -77,7 +77,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
     @Parameter(required = false)
     private Offlinelink[] offlinelinks = new Offlinelink[] { };
 
-    @Parameter(defaultValue = "false", property = "javadoc.skip")
+    @Parameter(defaultValue = "false", property = "maven.javadoc.skip")
     private boolean skip = false;
 
     @Inject private MavenSession session = null;
