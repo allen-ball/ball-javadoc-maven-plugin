@@ -57,6 +57,8 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  * {@link org.apache.maven.plugin.Mojo} to generate javadoc options file for
  * {@code maven-javadoc-plugin}.
  *
+ * {@injected.fields}
+ *
  * {@maven.plugin.fields}
  *
  * {@bean.info}

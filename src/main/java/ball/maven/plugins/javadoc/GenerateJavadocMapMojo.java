@@ -59,6 +59,8 @@ import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
  * The <i>package</i>-module and <i>package</i>-artifact key/values are
  * absent if no module or artifact respectively are specified.
  *
+ * {@injected.fields}
+ *
  * {@maven.plugin.fields}
  *
  * {@bean.info}

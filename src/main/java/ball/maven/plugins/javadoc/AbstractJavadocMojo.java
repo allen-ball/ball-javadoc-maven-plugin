@@ -62,6 +62,10 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 /**
  * Abstract base class for javadoc {@link org.apache.maven.plugin.Mojo}s.
  *
+ * {@injected.fields}
+ *
+ * {@maven.plugin.fields}
+ *
  * {@bean.info}
  *
  * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}
