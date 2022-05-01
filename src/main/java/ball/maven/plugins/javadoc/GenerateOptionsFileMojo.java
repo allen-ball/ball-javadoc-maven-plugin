@@ -77,6 +77,9 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
     @Parameter(defaultValue = "false", property = "includeDependencyManagement")
     private boolean includeDependencyManagement = false;
 
+    @Parameter(property = "doclet")
+    private String doclet = null;
+
     @Inject private MavenProject project = null;
 
     @Override
@@ -117,6 +120,11 @@ public class GenerateOptionsFileMojo extends AbstractJavadocMojo {
         Path options = parent.resolve("options");
 
         try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {
+            if (doclet != null) {
+                out.println("-doclet");
+                out.println(doclet);
+            }
+
             for (URL url : set) {
                 out.println("-link");
                 out.println(url);
