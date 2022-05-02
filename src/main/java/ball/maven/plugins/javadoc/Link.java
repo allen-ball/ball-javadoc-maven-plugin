@@ -26,11 +26,11 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Data;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.commons.text.lookup.StringLookup;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
 
 import static java.util.Arrays.asList;
@@ -50,15 +50,24 @@ public class Link {
 
     private String artifact = null;
     private URL url = null;
-    @Getter(lazy = true)
-    private final StrictPatternIncludesArtifactFilter filter =
-        new StrictPatternIncludesArtifactFilter(asList(artifact.split("[,\\p{Space}]+")));
 
     /**
      * See {@link StrictPatternIncludesArtifactFilter#include(Artifact)}.
      */
     public boolean include(Artifact artifact) {
-        return getFilter().include(artifact);
+        ArtifactFilter filter = getArtifactFilter();
+
+        return filter != null && getArtifactFilter().include(artifact);
+    }
+
+    private ArtifactFilter getArtifactFilter() {
+        ArtifactFilter filter = null;
+
+        if (artifact != null) {
+            filter = new StrictPatternIncludesArtifactFilter(asList(artifact.split("[,\\p{Space}]+")));
+        }
+
+        return filter;
     }
 
     /**

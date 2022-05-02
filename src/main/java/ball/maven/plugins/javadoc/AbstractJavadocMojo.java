@@ -122,20 +122,23 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
         Set<URL> set = new LinkedHashSet<>();
 
         for (Link link : links) {
-            project.getArtifacts().stream()
-                .filter(link::include)
-                .map(link::getUrl)
-                .forEach(set::add);
-        }
+            if (link.getArtifact() != null) {
+                Stream<Artifact> stream = project.getArtifacts().stream();
 
-        if (includeDependencyManagement) {
-            for (Link link : links) {
-                getDependencyManagementStream(project)
-                    .filter(t -> isNotBlank(t.getVersion()))
-                    .map(JavadocArtifact::new)
+                if (includeDependencyManagement) {
+                    stream =
+                        Stream.concat(stream,
+                                      getDependencyManagementStream(project)
+                                      .filter(t -> isNotBlank(t.getVersion()))
+                                      .map(JavadocArtifact::new));
+                }
+
+                stream
                     .filter(link::include)
                     .map(link::getUrl)
                     .forEach(set::add);
+            } else {
+                set.add(link.getUrl());
             }
         }
 
