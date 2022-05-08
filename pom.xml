@@ -47,7 +47,7 @@
     <url>https://github.com/allen-ball/ball-javadoc-maven-plugin.git</url>
   </scm>
   <properties>
-    <jse.target>8</jse.target>
+    <maven.compiler.release>8</maven.compiler.release>
     <maven-plugin-goal-prefix>ball-javadoc</maven-plugin-goal-prefix>
     <maven.javadoc.skip>true</maven.javadoc.skip>
   </properties>
