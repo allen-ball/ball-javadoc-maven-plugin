@@ -28,8 +28,8 @@
 
   <resolver:resolve>
     <dependencies>
-      <dependency coords="ball:parent:2022.1.1:xml:compile"/>
-      <dependency coords="ball:ball-util:6.3.3.20220628:compile"/>
+      <dependency coords="ball:parent:2022.1.2-SNAPSHOT:xml:compile"/>
+      <dependency coords="ball:ball-util:6.3.4-SNAPSHOT:compile"/>
     </dependencies>
     <properties/>
   </resolver:resolve>
