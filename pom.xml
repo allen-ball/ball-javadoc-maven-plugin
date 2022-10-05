@@ -22,7 +22,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>ball</groupId>
+  <groupId>dev.hcf.ball</groupId>
   <artifactId>ball-javadoc-maven-plugin</artifactId>
   <version>1.3.2-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
@@ -30,7 +30,7 @@
   <description>Javadoc Maven Plugin</description>
   <url>https://github.com/allen-ball/ball-javadoc-maven-plugin</url>
   <parent>
-    <groupId>ball</groupId>
+    <groupId>dev.hcf.ball</groupId>
     <artifactId>parent</artifactId>
     <version>2022.1.2-SNAPSHOT</version>
     <relativePath>../ball/parent/pom.xml</relativePath>

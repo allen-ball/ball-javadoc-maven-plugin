@@ -28,10 +28,10 @@
 
   <resolver:resolve>
     <dependencies>
-      <dependency coords="ball:parent:2022.1.2-SNAPSHOT:xml:compile"/>
-      <dependency coords="ball:ball-util:6.3.4-SNAPSHOT:compile"/>
+      <dependency coords="dev.hcf.ball:parent:2022.1.2-SNAPSHOT:xml:compile"/>
+      <dependency coords="dev.hcf.ball:ball-util:6.3.4-SNAPSHOT:compile"/>
     </dependencies>
     <properties/>
   </resolver:resolve>
-  <import file="${ball:parent:xml}"/>
+  <import file="${dev.hcf.ball:parent:xml}"/>
 </project>
