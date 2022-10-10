@@ -65,111 +65,121 @@
 <span class="sourceLineNo">057</span> * {@link org.apache.maven.plugin.Mojo} to generate javadoc options file for<a name="line.57"></a>
 <span class="sourceLineNo">058</span> * {@code maven-javadoc-plugin}.<a name="line.58"></a>
 <span class="sourceLineNo">059</span> *<a name="line.59"></a>
-<span class="sourceLineNo">060</span> * {@maven.plugin.fields}<a name="line.60"></a>
+<span class="sourceLineNo">060</span> * {@injected.fields}<a name="line.60"></a>
 <span class="sourceLineNo">061</span> *<a name="line.61"></a>
-<span class="sourceLineNo">062</span> * {@bean.info}<a name="line.62"></a>
+<span class="sourceLineNo">062</span> * {@maven.plugin.fields}<a name="line.62"></a>
 <span class="sourceLineNo">063</span> *<a name="line.63"></a>
-<span class="sourceLineNo">064</span> * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}<a name="line.64"></a>
-<span class="sourceLineNo">065</span> */<a name="line.65"></a>
-<span class="sourceLineNo">066</span>@Mojo(name = "generate-options-file", requiresDependencyResolution = RUNTIME,<a name="line.66"></a>
-<span class="sourceLineNo">067</span>      defaultPhase = GENERATE_SOURCES, requiresProject = true)<a name="line.67"></a>
-<span class="sourceLineNo">068</span>@NoArgsConstructor @ToString @Slf4j<a name="line.68"></a>
-<span class="sourceLineNo">069</span>public class GenerateOptionsFileMojo extends AbstractJavadocMojo {<a name="line.69"></a>
-<span class="sourceLineNo">070</span>    private static final Pattern JAR_ENTRY_PATTERN = Pattern.compile("^(package|element)[^-]*-list$");<a name="line.70"></a>
-<span class="sourceLineNo">071</span><a name="line.71"></a>
-<span class="sourceLineNo">072</span>    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/javadoc-options")<a name="line.72"></a>
-<span class="sourceLineNo">073</span>    private File outputDirectory = null;<a name="line.73"></a>
-<span class="sourceLineNo">074</span><a name="line.74"></a>
-<span class="sourceLineNo">075</span>    @Parameter(defaultValue = "false", property = "includeDependencyManagement")<a name="line.75"></a>
-<span class="sourceLineNo">076</span>    private boolean includeDependencyManagement = false;<a name="line.76"></a>
-<span class="sourceLineNo">077</span><a name="line.77"></a>
-<span class="sourceLineNo">078</span>    @Inject private MavenProject project = null;<a name="line.78"></a>
+<span class="sourceLineNo">064</span> * {@bean.info}<a name="line.64"></a>
+<span class="sourceLineNo">065</span> *<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * @author {@link.uri mailto:ball@hcf.dev Allen D. Ball}<a name="line.66"></a>
+<span class="sourceLineNo">067</span> */<a name="line.67"></a>
+<span class="sourceLineNo">068</span>@Mojo(name = "generate-options-file", requiresDependencyResolution = RUNTIME,<a name="line.68"></a>
+<span class="sourceLineNo">069</span>      defaultPhase = GENERATE_SOURCES, requiresProject = true)<a name="line.69"></a>
+<span class="sourceLineNo">070</span>@NoArgsConstructor @ToString @Slf4j<a name="line.70"></a>
+<span class="sourceLineNo">071</span>public class GenerateOptionsFileMojo extends AbstractJavadocMojo {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    private static final Pattern JAR_ENTRY_PATTERN = Pattern.compile("^(package|element)[^-]*-list$");<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span>    @Parameter(property = "outputDirectory", defaultValue = "${project.build.directory}/javadoc-options")<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    private File outputDirectory = null;<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>    @Parameter(defaultValue = "false", property = "includeDependencyManagement")<a name="line.77"></a>
+<span class="sourceLineNo">078</span>    private boolean includeDependencyManagement = false;<a name="line.78"></a>
 <span class="sourceLineNo">079</span><a name="line.79"></a>
-<span class="sourceLineNo">080</span>    @Override<a name="line.80"></a>
-<span class="sourceLineNo">081</span>    public void execute() throws MojoExecutionException, MojoFailureException {<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        super.execute();<a name="line.82"></a>
-<span class="sourceLineNo">083</span><a name="line.83"></a>
-<span class="sourceLineNo">084</span>        try {<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            if (! isSkip()) {<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                Set&lt;URL&gt; set = getLinkSet(project, includeDependencyManagement);<a name="line.86"></a>
-<span class="sourceLineNo">087</span>                Map&lt;URL,List&lt;Artifact&gt;&gt; map =<a name="line.87"></a>
-<span class="sourceLineNo">088</span>                    getResolvedOfflinelinkMap(project, includeDependencyManagement).entrySet().stream()<a name="line.88"></a>
-<span class="sourceLineNo">089</span>                    .collect(groupingBy(Map.Entry::getValue, mapping(Map.Entry::getKey, toList())));<a name="line.89"></a>
-<span class="sourceLineNo">090</span><a name="line.90"></a>
-<span class="sourceLineNo">091</span>                set.removeAll(map.keySet());<a name="line.91"></a>
-<span class="sourceLineNo">092</span><a name="line.92"></a>
-<span class="sourceLineNo">093</span>                generateOutput(set, map);<a name="line.93"></a>
-<span class="sourceLineNo">094</span>            } else {<a name="line.94"></a>
-<span class="sourceLineNo">095</span>                log.info("Skipping javadoc options file generation.");<a name="line.95"></a>
-<span class="sourceLineNo">096</span>            }<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        } catch (Throwable throwable) {<a name="line.97"></a>
-<span class="sourceLineNo">098</span>            log.error("{}", throwable.getMessage(), throwable);<a name="line.98"></a>
-<span class="sourceLineNo">099</span><a name="line.99"></a>
-<span class="sourceLineNo">100</span>            if (throwable instanceof MojoExecutionException) {<a name="line.100"></a>
-<span class="sourceLineNo">101</span>                throw (MojoExecutionException) throwable;<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            } else if (throwable instanceof MojoFailureException) {<a name="line.102"></a>
-<span class="sourceLineNo">103</span>                throw (MojoFailureException) throwable;<a name="line.103"></a>
-<span class="sourceLineNo">104</span>            } else {<a name="line.104"></a>
-<span class="sourceLineNo">105</span>                throw new MojoExecutionException(throwable.getMessage(), throwable);<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            }<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        }<a name="line.107"></a>
-<span class="sourceLineNo">108</span>    }<a name="line.108"></a>
-<span class="sourceLineNo">109</span><a name="line.109"></a>
-<span class="sourceLineNo">110</span>    private void generateOutput(Set&lt;URL&gt; set, Map&lt;URL,List&lt;Artifact&gt;&gt; map) throws IOException {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>        Path parent = outputDirectory.toPath();<a name="line.111"></a>
-<span class="sourceLineNo">112</span><a name="line.112"></a>
-<span class="sourceLineNo">113</span>        Files.createDirectories(parent);<a name="line.113"></a>
+<span class="sourceLineNo">080</span>    @Parameter(property = "doclet")<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    private String doclet = null;<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    @Inject private MavenProject project = null;<a name="line.83"></a>
+<span class="sourceLineNo">084</span><a name="line.84"></a>
+<span class="sourceLineNo">085</span>    @Override<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    public void execute() throws MojoExecutionException, MojoFailureException {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>        super.execute();<a name="line.87"></a>
+<span class="sourceLineNo">088</span><a name="line.88"></a>
+<span class="sourceLineNo">089</span>        try {<a name="line.89"></a>
+<span class="sourceLineNo">090</span>            if (! isSkip()) {<a name="line.90"></a>
+<span class="sourceLineNo">091</span>                Set&lt;URL&gt; set = getLinkSet(project, includeDependencyManagement);<a name="line.91"></a>
+<span class="sourceLineNo">092</span>                Map&lt;URL,List&lt;Artifact&gt;&gt; map =<a name="line.92"></a>
+<span class="sourceLineNo">093</span>                    getResolvedOfflinelinkMap(project, includeDependencyManagement).entrySet().stream()<a name="line.93"></a>
+<span class="sourceLineNo">094</span>                    .collect(groupingBy(Map.Entry::getValue, mapping(Map.Entry::getKey, toList())));<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>                set.removeAll(map.keySet());<a name="line.96"></a>
+<span class="sourceLineNo">097</span><a name="line.97"></a>
+<span class="sourceLineNo">098</span>                generateOutput(set, map);<a name="line.98"></a>
+<span class="sourceLineNo">099</span>            } else {<a name="line.99"></a>
+<span class="sourceLineNo">100</span>                log.info("Skipping javadoc options file generation.");<a name="line.100"></a>
+<span class="sourceLineNo">101</span>            }<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        } catch (Throwable throwable) {<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            log.error("{}", throwable.getMessage(), throwable);<a name="line.103"></a>
+<span class="sourceLineNo">104</span><a name="line.104"></a>
+<span class="sourceLineNo">105</span>            if (throwable instanceof MojoExecutionException) {<a name="line.105"></a>
+<span class="sourceLineNo">106</span>                throw (MojoExecutionException) throwable;<a name="line.106"></a>
+<span class="sourceLineNo">107</span>            } else if (throwable instanceof MojoFailureException) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>                throw (MojoFailureException) throwable;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>            } else {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>                throw new MojoExecutionException(throwable.getMessage(), throwable);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    }<a name="line.113"></a>
 <span class="sourceLineNo">114</span><a name="line.114"></a>
-<span class="sourceLineNo">115</span>        Path options = parent.resolve("options");<a name="line.115"></a>
-<span class="sourceLineNo">116</span><a name="line.116"></a>
-<span class="sourceLineNo">117</span>        try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>            for (URL url : set) {<a name="line.118"></a>
-<span class="sourceLineNo">119</span>                out.println("-link");<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                out.println(url);<a name="line.120"></a>
-<span class="sourceLineNo">121</span>            }<a name="line.121"></a>
-<span class="sourceLineNo">122</span><a name="line.122"></a>
-<span class="sourceLineNo">123</span>            for (Map.Entry&lt;URL,List&lt;Artifact&gt;&gt; entry : map.entrySet()) {<a name="line.123"></a>
-<span class="sourceLineNo">124</span>                List&lt;Artifact&gt; artifacts = entry.getValue();<a name="line.124"></a>
-<span class="sourceLineNo">125</span><a name="line.125"></a>
-<span class="sourceLineNo">126</span>                for (Artifact artifact : artifacts) {<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                    Path location = parent.resolve(ArtifactUtils.versionlessKey(artifact));<a name="line.127"></a>
-<span class="sourceLineNo">128</span><a name="line.128"></a>
-<span class="sourceLineNo">129</span>                    Files.createDirectories(location);<a name="line.129"></a>
-<span class="sourceLineNo">130</span><a name="line.130"></a>
-<span class="sourceLineNo">131</span>                    try (JarFile jar = new JarFile(artifact.getFile())) {<a name="line.131"></a>
-<span class="sourceLineNo">132</span>                        List&lt;JarEntry&gt; entries =<a name="line.132"></a>
-<span class="sourceLineNo">133</span>                            jar.stream()<a name="line.133"></a>
-<span class="sourceLineNo">134</span>                            .filter(t -&gt; JAR_ENTRY_PATTERN.matcher(t.getName()).matches())<a name="line.134"></a>
-<span class="sourceLineNo">135</span>                            .collect(toList());<a name="line.135"></a>
-<span class="sourceLineNo">136</span><a name="line.136"></a>
-<span class="sourceLineNo">137</span>                        if (! entries.isEmpty()) {<a name="line.137"></a>
-<span class="sourceLineNo">138</span>                            for (JarEntry jarEntry : entries) {<a name="line.138"></a>
-<span class="sourceLineNo">139</span>                                try (InputStream in = jar.getInputStream(jarEntry)) {<a name="line.139"></a>
-<span class="sourceLineNo">140</span>                                    Files.copy(in, location.resolve(jarEntry.getName()), REPLACE_EXISTING);<a name="line.140"></a>
-<span class="sourceLineNo">141</span>                                }<a name="line.141"></a>
-<span class="sourceLineNo">142</span>                            }<a name="line.142"></a>
-<span class="sourceLineNo">143</span><a name="line.143"></a>
-<span class="sourceLineNo">144</span>                            Path packageList = location.resolve("package-list");<a name="line.144"></a>
-<span class="sourceLineNo">145</span>                            Path elementList = location.resolve("element-list");<a name="line.145"></a>
+<span class="sourceLineNo">115</span>    private void generateOutput(Set&lt;URL&gt; set, Map&lt;URL,List&lt;Artifact&gt;&gt; map) throws IOException {<a name="line.115"></a>
+<span class="sourceLineNo">116</span>        Path parent = outputDirectory.toPath();<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>        Files.createDirectories(parent);<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>        Path options = parent.resolve("options");<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>        try (PrintWriter out = new PrintWriter(Files.newBufferedWriter(options, CREATE, WRITE, TRUNCATE_EXISTING))) {<a name="line.122"></a>
+<span class="sourceLineNo">123</span>            if (doclet != null) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                out.println("-doclet");<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                out.println(doclet);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>            }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>            for (URL url : set) {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>                out.println("-link");<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                out.println(url);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            }<a name="line.131"></a>
+<span class="sourceLineNo">132</span><a name="line.132"></a>
+<span class="sourceLineNo">133</span>            for (Map.Entry&lt;URL,List&lt;Artifact&gt;&gt; entry : map.entrySet()) {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>                List&lt;Artifact&gt; artifacts = entry.getValue();<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>                for (Artifact artifact : artifacts) {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>                    Path location = parent.resolve(ArtifactUtils.versionlessKey(artifact));<a name="line.137"></a>
+<span class="sourceLineNo">138</span><a name="line.138"></a>
+<span class="sourceLineNo">139</span>                    Files.createDirectories(location);<a name="line.139"></a>
+<span class="sourceLineNo">140</span><a name="line.140"></a>
+<span class="sourceLineNo">141</span>                    try (JarFile jar = new JarFile(artifact.getFile())) {<a name="line.141"></a>
+<span class="sourceLineNo">142</span>                        List&lt;JarEntry&gt; entries =<a name="line.142"></a>
+<span class="sourceLineNo">143</span>                            jar.stream()<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                            .filter(t -&gt; JAR_ENTRY_PATTERN.matcher(t.getName()).matches())<a name="line.144"></a>
+<span class="sourceLineNo">145</span>                            .collect(toList());<a name="line.145"></a>
 <span class="sourceLineNo">146</span><a name="line.146"></a>
-<span class="sourceLineNo">147</span>                            if (! Files.exists(packageList)) {<a name="line.147"></a>
-<span class="sourceLineNo">148</span>                                Files.copy(elementList, packageList);<a name="line.148"></a>
-<span class="sourceLineNo">149</span>                            } else if (! Files.exists(elementList)) {<a name="line.149"></a>
-<span class="sourceLineNo">150</span>                                Files.copy(packageList, elementList);<a name="line.150"></a>
-<span class="sourceLineNo">151</span>                            }<a name="line.151"></a>
-<span class="sourceLineNo">152</span><a name="line.152"></a>
-<span class="sourceLineNo">153</span>                            out.println("-linkoffline");<a name="line.153"></a>
-<span class="sourceLineNo">154</span>                            out.println(entry.getKey());<a name="line.154"></a>
-<span class="sourceLineNo">155</span>                            out.println(location);<a name="line.155"></a>
-<span class="sourceLineNo">156</span>                        } else {<a name="line.156"></a>
-<span class="sourceLineNo">157</span>                            log.warn("{}: Location directory is empty; skipping...", location);<a name="line.157"></a>
-<span class="sourceLineNo">158</span>                        }<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                    }<a name="line.159"></a>
-<span class="sourceLineNo">160</span>                }<a name="line.160"></a>
-<span class="sourceLineNo">161</span>            }<a name="line.161"></a>
-<span class="sourceLineNo">162</span>        }<a name="line.162"></a>
-<span class="sourceLineNo">163</span>    }<a name="line.163"></a>
-<span class="sourceLineNo">164</span>}<a name="line.164"></a>
+<span class="sourceLineNo">147</span>                        if (! entries.isEmpty()) {<a name="line.147"></a>
+<span class="sourceLineNo">148</span>                            for (JarEntry jarEntry : entries) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>                                try (InputStream in = jar.getInputStream(jarEntry)) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>                                    Files.copy(in, location.resolve(jarEntry.getName()), REPLACE_EXISTING);<a name="line.150"></a>
+<span class="sourceLineNo">151</span>                                }<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                            }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>                            Path packageList = location.resolve("package-list");<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                            Path elementList = location.resolve("element-list");<a name="line.155"></a>
+<span class="sourceLineNo">156</span><a name="line.156"></a>
+<span class="sourceLineNo">157</span>                            if (! Files.exists(packageList)) {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                                Files.copy(elementList, packageList);<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                            } else if (! Files.exists(elementList)) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                                Files.copy(packageList, elementList);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>                            }<a name="line.161"></a>
+<span class="sourceLineNo">162</span><a name="line.162"></a>
+<span class="sourceLineNo">163</span>                            out.println("-linkoffline");<a name="line.163"></a>
+<span class="sourceLineNo">164</span>                            out.println(entry.getKey());<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                            out.println(location);<a name="line.165"></a>
+<span class="sourceLineNo">166</span>                        } else {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                            log.warn("{}: Location directory is empty; skipping...", location);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>                        }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>                    }<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            }<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        }<a name="line.172"></a>
+<span class="sourceLineNo">173</span>    }<a name="line.173"></a>
+<span class="sourceLineNo">174</span>}<a name="line.174"></a>
 
 
 
