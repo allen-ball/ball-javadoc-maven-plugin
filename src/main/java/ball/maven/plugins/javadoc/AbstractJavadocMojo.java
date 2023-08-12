@@ -3,7 +3,7 @@ package ball.maven.plugins.javadoc;
  * ##########################################################################
  * Javadoc Maven Plugin
  * %%
- * Copyright (C) 2021, 2022 Allen D. Ball
+ * Copyright (C) 2021 - 2023 Allen D. Ball
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ package ball.maven.plugins.javadoc;
  */
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -39,7 +37,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -50,7 +47,6 @@ import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver;
 
 import static java.util.stream.Collectors.toCollection;
@@ -70,9 +66,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 @NoArgsConstructor(access = PROTECTED) @Getter @ToString @Slf4j
 public abstract class AbstractJavadocMojo extends AbstractMojo {
-    @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true, required = true)
-    private List<ArtifactRepository> remoteRepositories = Collections.emptyList();
-
     @Parameter(required = false)
     private Link[] links = new Link[] { };
 
@@ -184,7 +177,7 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
 
         artifacts.removeAll(map.keySet());
 
-        ProjectBuildingRequest request = getProjectBuildingRequest();
+        ProjectBuildingRequest request = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
 
         for (Offlinelink offlinelink : offlinelinks) {
             Set<Artifact> set =
@@ -199,8 +192,9 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
                     log.info("Resolving {}...", artifact);
 
                     try {
-                        map.putIfAbsent(resolver.resolveArtifact(request, artifact).getArtifact(),
-                                        offlinelink.getUrl(artifact));
+                        Artifact key = resolver.resolveArtifact(request, artifact).getArtifact();
+
+                        map.putIfAbsent(key, offlinelink.getUrl(artifact));
                     } catch (Exception exception) {
                         log.warn("{}: {}", artifact, exception.getMessage());
                         log.debug("{}", exception);
@@ -214,21 +208,6 @@ public abstract class AbstractJavadocMojo extends AbstractMojo {
         }
 
         return map;
-    }
-
-    private ProjectBuildingRequest getProjectBuildingRequest() {
-        List<ArtifactRepository> repoList = getRemoteRepositories();
-        Settings settings = session.getSettings();
-
-        system.injectMirror(repoList, settings.getMirrors());
-        system.injectProxy(repoList, settings.getProxies());
-        system.injectAuthentication(repoList, settings.getServers());
-
-        ProjectBuildingRequest request = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-
-        request.setRemoteRepositories(repoList);
-
-        return request;
     }
 
     @Override
