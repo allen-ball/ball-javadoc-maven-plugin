@@ -28,8 +28,8 @@
 
   <resolver:resolve>
     <dependencies>
-      <dependency coords="dev.hcf.ball:parent:2024.0.1:xml:compile"/>
-      <dependency coords="dev.hcf.ball:ball-util:6.4.13.20240628:compile"/>
+      <dependency coords="dev.hcf.ball:parent:2024.0.2:xml:compile"/>
+      <dependency coords="dev.hcf.ball:ball-util:6.4.14.20240921:compile"/>
     </dependencies>
     <properties/>
   </resolver:resolve>
