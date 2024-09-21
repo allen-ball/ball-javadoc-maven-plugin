@@ -24,13 +24,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>dev.hcf.ball</groupId>
   <artifactId>ball-javadoc-maven-plugin-gh-pages</artifactId>
-  <version>1.4.3.20240628</version>
+  <version>1.4.4.20240921</version>
   <packaging>pom</packaging>
   <name>${javadoc.groupId}:${javadoc.artifactId} API</name>
   <parent>
     <groupId>dev.hcf.ball</groupId>
     <artifactId>javadoc-parent</artifactId>
-    <version>2024.0.1</version>
+    <version>2024.0.2</version>
     <relativePath>../ball/javadoc-parent/pom.xml</relativePath>
   </parent>
   <organization>
@@ -47,7 +47,6 @@
     <dependency>
       <groupId>${javadoc.groupId}</groupId>
       <artifactId>${javadoc.artifactId}</artifactId>
-      <version>${javadoc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
