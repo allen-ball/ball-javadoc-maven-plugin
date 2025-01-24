@@ -2,7 +2,7 @@
 <!--
   ##########################################################################
   %%
-  Copyright (C) 2021 - 2024 Allen D. Ball
+  Copyright (C) 2021 - 2025 Allen D. Ball
   %%
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@
 
   <resolver:resolve>
     <dependencies>
-      <dependency coords="dev.hcf.ball:parent:2024.0.2:xml:compile"/>
-      <dependency coords="dev.hcf.ball:ball-util:6.4.14.20240921:compile"/>
+      <dependency coords="dev.hcf.ball:parent:2025.0.0:xml:compile"/>
+      <dependency coords="dev.hcf.ball:ball-util:6.4.15.20250124:compile"/>
     </dependencies>
     <properties/>
   </resolver:resolve>
