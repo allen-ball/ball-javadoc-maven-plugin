@@ -52,7 +52,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
 
     <mavenVersion>3.9.9</mavenVersion>
-    <resolverVersion>1.9.22</resolverVersion>
+    <resolverVersion>1.9.23</resolverVersion>
   </properties>
   <dependencies verbose="true">
     <dependency>
