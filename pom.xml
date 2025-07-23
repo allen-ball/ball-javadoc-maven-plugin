@@ -51,8 +51,8 @@
     <maven-plugin-goal-prefix>ball-javadoc</maven-plugin-goal-prefix>
     <maven.javadoc.skip>true</maven.javadoc.skip>
 
-    <mavenVersion>3.9.10</mavenVersion>
-    <resolverVersion>1.9.23</resolverVersion>
+    <mavenVersion>3.9.11</mavenVersion>
+    <resolverVersion>1.9.24</resolverVersion>
   </properties>
   <dependencies verbose="true">
     <dependency>
